@@ -44,7 +44,7 @@
 
 ## 项目贡献
 
-欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/smartping/smartping/issues/) 讨论新特性或者变更。
+感谢原作者的项目贡献(https://github.com/smartping/smartping),我仅在原基础上新增了对IPv6的支持。
 
 ## 其他资料 ##
 
