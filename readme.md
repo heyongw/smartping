@@ -2,7 +2,7 @@
     <a href="http://smartping.org">
         <img src="http://smartping.org/logo.png">
     </a>
-    <h3 align="center">SmartPing | 开源、高效、便捷的网络质量监控神器</h3>
+    <h3 align="center">SmartPing | 开源、高效、便捷的IPv4/IPv6网络质量监控神器</h3>
     <p align="center">
         一个综合性网络质量(PING)检测工具，支持正/反向PING绘图、互PING拓扑绘图与报警、全国PING延迟地图与在线检测工具等功能
         <br>
@@ -25,7 +25,7 @@
 </p>
 
 ## 功能 ##
-
+- 在原功能基础上，新增支持IPv6检测功能
 - 正向PING，反向Ping绘图
 - 互PING间机器的状态拓扑，自定义延迟、丢包阈值报警（声音报警与邮件报警），报警时MTR检测
 - 全国PING延迟地图（各省份可分电信、联通、移动三条线路）

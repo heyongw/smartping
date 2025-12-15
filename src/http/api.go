@@ -8,8 +8,8 @@ import (
 	"github.com/smartping/smartping/src/funcs"
 	"github.com/smartping/smartping/src/g"
 	"github.com/smartping/smartping/src/nettools"
-	"github.com/wcharczuk/go-chart"
-	"github.com/wcharczuk/go-chart/drawing"
+	"github.com/wcharczuk/go-chart/v2"
+	"github.com/wcharczuk/go-chart/v2/drawing"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -381,7 +381,7 @@ func configApiRoutes() {
 			RenderJson(w, preout)
 			return
 		}
-		if !ValidIP4(nconfig.Addr) {
+		if !ValidIP(nconfig.Addr) {
 			preout["info"] = "非法本机节点IP!"
 			RenderJson(w, preout)
 			return
@@ -420,7 +420,7 @@ func configApiRoutes() {
 		}
 		//Network
 		for k, network := range nconfig.Network {
-			if !ValidIP4(network.Addr) || !ValidIP4(k) {
+			if !ValidIP(network.Addr) || !ValidIP(k) {
 				preout["info"] = "Ping节点测试网络信息错误!(非法节点IP地址 " + k + ")"
 				RenderJson(w, preout)
 				return
@@ -485,7 +485,7 @@ func configApiRoutes() {
 		for _, provVal := range nconfig.Chinamap {
 			for _, telcomVal := range provVal {
 				for _, ip := range telcomVal {
-					if ip != "" && !ValidIP4(ip) {
+					if ip != "" && !ValidIP(ip) {
 						preout["info"] = "Mapping Ip illegal!"
 						RenderJson(w, preout)
 						return

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"github.com/cihub/seelog"
 	"github.com/smartping/smartping/src/g"
-	"github.com/wcharczuk/go-chart"
-	"github.com/wcharczuk/go-chart/drawing"
+	"github.com/wcharczuk/go-chart/v2"
+	"github.com/wcharczuk/go-chart/v2/drawing"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"regexp"
@@ -21,6 +22,21 @@ func ValidIP4(ipAddress string) bool {
 		return true
 	}
 	return false
+}
+
+// 验证IPv6地址
+func ValidIP6(ipAddress string) bool {
+	ipAddress = strings.Trim(ipAddress, " ")
+	ip := net.ParseIP(ipAddress)
+	if ip != nil && ip.To4() == nil && ip.To16() != nil {
+		return true
+	}
+	return false
+}
+
+// 验证IPv4或IPv6地址
+func ValidIP(ipAddress string) bool {
+	return ValidIP4(ipAddress) || ValidIP6(ipAddress)
 }
 
 func RenderJson(w http.ResponseWriter, v interface{}) {

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"golang.org/x/net/icmp"
 	"golang.org/x/net/ipv4"
+	"golang.org/x/net/ipv6"
 	"math"
 	"math/rand"
 	"net"
@@ -29,19 +30,37 @@ func RunMtr(Addr string, maxrtt time.Duration, maxttl int, maxtimeout int) ([]Mt
 	mtr := map[int][]ICMP{}
 	var err error
 	timeouts := 0
+	
+	// Resolve the address to determine IP version
+	ipAddr, err := net.ResolveIPAddr("ip", Addr)
+	if err != nil {
+		return result, errors.New("Unable to resolve destination host")
+	}
+	
+	// Check if target is IPv6
+	isIPv6 := false
+	if ipAddr != nil && ipAddr.IP != nil && ipAddr.IP.To4() == nil {
+		isIPv6 = true
+	}
+	
 	for ttl := 1; ttl <= maxttl; ttl++ {
 		id := rand.Intn(65535)
 		seq := rand.Intn(65535)
+		
+		var msg icmp.Message
+		if isIPv6 {
+			msg = icmp.Message{Type: ipv6.ICMPTypeEchoRequest, Code: 0, Body: &icmp.Echo{ID: id, Seq: seq}}
+		} else {
+			msg = icmp.Message{Type: ipv4.ICMPTypeEcho, Code: 0, Body: &icmp.Echo{ID: id, Seq: seq}}
+		}
+		
 		res := pkg{
 			maxrtt: maxrtt,
 			id:     id,
 			seq:    seq,
-			msg:    icmp.Message{Type: ipv4.ICMPTypeEcho, Code: 0, Body: &icmp.Echo{ID: id, Seq: seq}},
+			msg:    msg,
 		}
-		res.dest, err = net.ResolveIPAddr("ip", Addr)
-		if err != nil {
-			return result, errors.New("Unable to resolve destination host")
-		}
+		res.dest = ipAddr
 		res.netmsg, err = res.msg.Marshal(nil)
 		if nil != err {
 			return result, err
@@ -64,16 +83,21 @@ func RunMtr(Addr string, maxrtt time.Duration, maxttl int, maxtimeout int) ([]Mt
 			for j := 1; j < 10; j++ {
 				id := rand.Intn(65535)
 				seq := rand.Intn(65535)
+				
+				var msg icmp.Message
+				if isIPv6 {
+					msg = icmp.Message{Type: ipv6.ICMPTypeEchoRequest, Code: 0, Body: &icmp.Echo{ID: id, Seq: seq}}
+				} else {
+					msg = icmp.Message{Type: ipv4.ICMPTypeEcho, Code: 0, Body: &icmp.Echo{ID: id, Seq: seq}}
+				}
+				
 				res := pkg{
 					maxrtt: maxrtt,
 					id:     id,
 					seq:    seq,
-					msg:    icmp.Message{Type: ipv4.ICMPTypeEcho, Code: 0, Body: &icmp.Echo{ID: id, Seq: seq}},
+					msg:    msg,
 				}
-				res.dest, err = net.ResolveIPAddr("ip", Addr)
-				if err != nil {
-					return
-				}
+				res.dest = ipAddr
 				res.netmsg, err = res.msg.Marshal(nil)
 				if nil != err {
 					return

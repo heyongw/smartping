@@ -29,6 +29,13 @@ func PingTask(t g.NetworkMember, wg *sync.WaitGroup) {
 	lossPK := 0
 	ipaddr, err := net.ResolveIPAddr("ip", t.Addr)
 	if err == nil {
+		// Log IP version for debugging
+		if ipaddr.IP.To4() == nil {
+			seelog.Info("[func:PingTask] Detected IPv6 address: ", t.Addr)
+		} else {
+			seelog.Info("[func:PingTask] Detected IPv4 address: ", t.Addr)
+		}
+		
 		for i := 0; i < 20; i++ {
 			starttime := time.Now().UnixNano()
 			delay, err := nettools.RunPing(ipaddr, 3*time.Second, 64, i)
